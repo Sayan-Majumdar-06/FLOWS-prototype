@@ -23,7 +23,7 @@ def open_browser():
 if __name__ == "__main__":
     print("=" * 65)
     print("  FLOWS — Flash Flood & Landslide Observation & Warning System")
-    print("  Team Heisenbug — SIH Round 2")
+    print("  Team Heisenbergers — SIH Round 2")
     print("=" * 65)
     print()
     print("  Starting server at http://localhost:8000")
