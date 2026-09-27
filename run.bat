@@ -4,7 +4,7 @@ color 0B
 
 echo ======================================================================
 echo    FLOWS -- Flash Flood & Landslide Observation & Warning System
-echo    SIH Round 2 -- Team Heisenbug
+echo    SIH Round 2 -- Team Heisenbergers
 echo ======================================================================
 echo.
 echo Starting FastAPI Backend + React Dashboard...
