@@ -139,8 +139,8 @@ export default function SourceHealthGrid() {
             marginBottom: '24px',
             flexWrap: 'wrap',
             gap: '16px',
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border)',
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
             padding: '22px 26px',
             borderRadius: '12px',
             boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
@@ -155,7 +155,7 @@ export default function SourceHealthGrid() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
-                color: 'var(--text-primary)',
+                color: '#0f172a',
               }}
             >
               <span style={{ fontSize: '1.75rem' }}>📡</span> Live External API Health Monitor
@@ -215,17 +215,17 @@ export default function SourceHealthGrid() {
 
       {/* Architecture Transparency Banner */}
       <div style={{
-        background: 'var(--bg-card)',
-        border: '1px solid var(--border)',
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
         borderRadius: '12px',
         padding: '18px 22px',
         marginBottom: '24px',
         fontSize: '0.92rem',
         lineHeight: '1.6',
-        color: 'var(--text-secondary)',
+        color: '#334155',
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
       }}>
-        <div style={{ fontWeight: 800, color: '#38bdf8', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem' }}>
+        <div style={{ fontWeight: 800, color: '#0369a1', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem' }}>
           <span>ℹ️</span> Open Scientific Data Infrastructure &amp; Live Telemetry
         </div>
         <div>
@@ -235,11 +235,11 @@ export default function SourceHealthGrid() {
         <div style={{
           marginTop: '12px',
           padding: '10px 14px',
-          background: 'rgba(56, 189, 248, 0.1)',
+          background: '#f0f9ff',
           borderRadius: '8px',
-          border: '1px solid rgba(56, 189, 248, 0.3)',
+          border: '1px solid #bae6fd',
           fontSize: '0.86rem',
-          color: '#38bdf8',
+          color: '#0369a1',
           display: 'flex',
           alignItems: 'center',
           gap: '8px'
@@ -290,8 +290,8 @@ export default function SourceHealthGrid() {
               key={s.id}
               className="src-card"
               style={{
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border)',
+                background: '#ffffff',
+                border: '1px solid #e2e8f0',
                 borderRadius: '12px',
                 padding: '22px',
                 display: 'flex',
@@ -299,13 +299,13 @@ export default function SourceHealthGrid() {
                 gap: '14px',
                 position: 'relative',
                 boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
-                color: 'var(--text-primary)',
+                color: '#0f172a',
               }}
             >
               {/* Header: Name + Status */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
                 <div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '4px' }}>
+                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a', marginBottom: '4px' }}>
                     {s.name}
                   </div>
                   <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500 }}>
@@ -335,9 +335,9 @@ export default function SourceHealthGrid() {
               {/* Type & Auth Tags */}
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 <span style={{
-                  background: 'rgba(56, 189, 248, 0.1)',
+                  background: '#f0f9ff',
                   color: '#0284c7',
-                  border: '1px solid rgba(56, 189, 248, 0.3)',
+                  border: '1px solid #bae6fd',
                   padding: '3px 10px',
                   borderRadius: '5px',
                   fontSize: '0.78rem',
@@ -359,33 +359,33 @@ export default function SourceHealthGrid() {
               </div>
 
               {/* Purpose */}
-              <div style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: '1.55', fontWeight: 400 }}>
+              <div style={{ fontSize: '0.92rem', color: '#334155', lineHeight: '1.55', fontWeight: 400 }}>
                 {s.purpose}
               </div>
 
               {/* Usage in FLOWS */}
               <div style={{
-                background: 'var(--bg-inset)',
+                background: '#f8fafc',
                 padding: '10px 14px',
                 borderRadius: '8px',
                 fontSize: '0.84rem',
                 color: '#1e293b',
-                border: '1px solid var(--border)'
+                border: '1px solid #e2e8f0'
               }}>
-                <span style={{ color: '#38bdf8', fontWeight: 700 }}>FLOWS Component: </span>
-                <span style={{ color: 'var(--text-secondary)' }}>{s.used_in}</span>
+                <span style={{ color: '#0369a1', fontWeight: 700 }}>FLOWS Component: </span>
+                <span style={{ color: '#334155' }}>{s.used_in}</span>
               </div>
 
               {/* Live Endpoint */}
               <div style={{
                 fontFamily: 'monospace',
                 fontSize: '0.78rem',
-                background: 'var(--bg-inset)',
+                background: '#f1f5f9',
                 padding: '8px 12px',
                 borderRadius: '8px',
-                color: 'var(--text-primary)',
+                color: '#0f172a',
                 wordBreak: 'break-all',
-                border: '1px solid var(--border)'
+                border: '1px solid #e2e8f0'
               }}>
                 🌐 {s.endpoint}
               </div>
@@ -401,8 +401,8 @@ export default function SourceHealthGrid() {
                 fontSize: '0.86rem',
                 color: '#64748b'
               }}>
-                <span style={{ color: 'var(--text-secondary)' }}>
-                  ⏱ Live Latency: <strong style={{ color: 'var(--text-primary)', fontSize: '0.92rem' }}>{s.latency || '240 ms'}</strong>
+                <span style={{ color: '#475569' }}>
+                  ⏱ Live Latency: <strong style={{ color: '#0f172a', fontSize: '0.92rem' }}>{s.latency || '240 ms'}</strong>
                 </span>
                 <span style={{ color: '#64748b' }}>
                   🕐 {updateText}
@@ -417,11 +417,11 @@ export default function SourceHealthGrid() {
       <div style={{
         marginTop: '34px',
         padding: '18px 22px',
-        background: 'var(--bg-card)',
+        background: '#ffffff',
         borderRadius: '10px',
-        border: '1px solid var(--border)',
+        border: '1px solid #e2e8f0',
         fontSize: '0.85rem',
-        color: 'var(--text-secondary)',
+        color: '#475569',
         display: 'flex',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
@@ -429,7 +429,7 @@ export default function SourceHealthGrid() {
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
       }}>
         <div>
-          <strong style={{ color: 'var(--text-primary)' }}>External Services:</strong> Open-Elevation (SRTM 90m), Open-Meteo (Copernicus DEM), Esri ArcGIS World Imagery, OpenStreetMap Overpass QL API, OSM Carto.
+          <strong style={{ color: '#0f172a' }}>External Services:</strong> Open-Elevation (SRTM 90m), Open-Meteo (Copernicus DEM), Esri ArcGIS World Imagery, OpenStreetMap Overpass QL API, OSM Carto.
         </div>
         <div style={{ color: '#64748b' }}>
           Last Checked: {lastCheckTime}
