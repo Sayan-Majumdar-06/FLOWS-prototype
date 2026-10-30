@@ -6,10 +6,10 @@ import { useSimulationContext } from '../state/SimulationContext';
 import { pilotLocations } from '../data/pilotLocations';
 
 function probColor(p) {
-  if (p >= 0.8) return '#dc2626';
-  if (p >= 0.6) return '#ea580c';
-  if (p >= 0.3) return '#d97706';
-  return '#16a34a';
+  if (p >= 0.8) return '#ef4444';
+  if (p >= 0.6) return '#f97316';
+  if (p >= 0.3) return '#f59e0b';
+  return '#10b981';
 }
 
 function safeNum(val, fallback = 0) {
@@ -40,7 +40,7 @@ export default function MapView() {
   const { selectedLocation, setSelectedLocation, locations: ctxLocations } = useAppContext();
   const { lastPrediction } = useSimulationContext();
   const [locations, setLocations] = useState(ctxLocations || pilotLocations);
-  const [layer, setLayer] = useState('osm');
+  const [layer, setLayer] = useState('dark');
 
   useEffect(() => {
     if (Array.isArray(ctxLocations) && ctxLocations.length > 0) {
@@ -50,20 +50,33 @@ export default function MapView() {
 
   const tileUrl = layer === 'satellite'
     ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+    : layer === 'dark'
+    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
     : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
   const defaultCenter = [27.45, 88.58];
 
   return (
     <div className="map-wrapper" style={{ height: '100%', width: '100%', position: 'relative' }}>
-      {/* Layer toggle */}
+      {/* Tactical layer toggle */}
       <div className="map-controls">
-        <button className={`map-btn ${layer === 'osm' ? 'active' : ''}`} onClick={() => setLayer('osm')}>🗺 Map</button>
-        <button className={`map-btn ${layer === 'satellite' ? 'active' : ''}`} onClick={() => setLayer('satellite')}>🛰 Satellite</button>
+        <button className={`map-btn ${layer === 'dark' ? 'active' : ''}`} onClick={() => setLayer('dark')}>
+          🌑 Tactical Dark
+        </button>
+        <button className={`map-btn ${layer === 'satellite' ? 'active' : ''}`} onClick={() => setLayer('satellite')}>
+          🛰 Satellite
+        </button>
+        <button className={`map-btn ${layer === 'osm' ? 'active' : ''}`} onClick={() => setLayer('osm')}>
+          🗺 Topo
+        </button>
       </div>
 
       <MapContainer center={defaultCenter} zoom={10} style={{ height: '100%', width: '100%' }} zoomControl={true}>
-        <TileLayer url={tileUrl} attribution="© OpenStreetMap / Esri" maxZoom={18} />
+        <TileLayer 
+          url={tileUrl} 
+          attribution={layer === 'dark' ? '© CARTO / OpenStreetMap' : layer === 'satellite' ? '© Esri World Imagery' : '© OpenStreetMap'} 
+          maxZoom={18} 
+        />
         <FlyTo location={selectedLocation} />
 
         {locations.map(loc => {
@@ -83,29 +96,31 @@ export default function MapView() {
               center={[lat, lng]}
               radius={isSelected ? 14 : 9}
               pathOptions={{
-                color: isSelected ? '#ffffff' : color,
+                color: isSelected ? '#38bdf8' : color,
                 fillColor: color,
                 fillOpacity: 0.85,
-                weight: isSelected ? 3 : 1.5,
+                weight: isSelected ? 3.5 : 1.5,
               }}
               eventHandlers={{ click: () => setSelectedLocation(loc) }}
             >
               <Popup>
-                <div style={{ minWidth: 200, background: '#ffffff', color: '#0f172a', borderRadius: 8, padding: '10px 12px', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', border: '1px solid #e2e8f0' }}>
-                  <div style={{ fontWeight: 800, fontSize: 13, color: '#0f172a', marginBottom: 4 }}>{loc.name || locId}</div>
-                  <div style={{ display: 'inline-block', fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4, marginBottom: 6, background: loc.hazard_typology === 'COMPOUND' ? '#f3e8ff' : loc.hazard_typology === 'LANDSLIDE_ONLY' ? '#fef3c7' : '#e0f2fe', color: loc.hazard_typology === 'COMPOUND' ? '#7e22ce' : loc.hazard_typology === 'LANDSLIDE_ONLY' ? '#b45309' : '#0369a1' }}>
-                    {loc.hazard_typology === 'COMPOUND' ? '🔮 Compound Gorge' : loc.hazard_typology === 'LANDSLIDE_ONLY' ? '🏔️ High Alpine Ridge' : '🌊 River Basin Flat'}
+                <div style={{ minWidth: 210, background: '#0c1017', color: '#f8fafc', borderRadius: 8, padding: '10px 12px', boxShadow: '0 8px 24px rgba(0,0,0,0.6)', border: '1px solid #1e2c44' }}>
+                  <div style={{ fontWeight: 800, fontSize: 13, color: '#f8fafc', marginBottom: 4, letterSpacing: '0.2px' }}>
+                    {loc.name || locId}
+                  </div>
+                  <div style={{ display: 'inline-block', fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4, marginBottom: 6, background: loc.hazard_typology === 'COMPOUND' ? 'rgba(168,85,247,0.18)' : loc.hazard_typology === 'LANDSLIDE_ONLY' ? 'rgba(245,158,11,0.18)' : 'rgba(56,189,248,0.18)', color: loc.hazard_typology === 'COMPOUND' ? '#c084fc' : loc.hazard_typology === 'LANDSLIDE_ONLY' ? '#fbbf24' : '#38bdf8', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    {loc.hazard_typology === 'COMPOUND' ? '🔮 Compound Gorge' : loc.hazard_typology === 'LANDSLIDE_ONLY' ? '🏔️ Alpine Ridge Cut' : '🌊 River Basin Flat'}
                   </div>
                   <div style={{ fontSize: 12, lineHeight: 1.5 }}>
-                    <div>🏔 Landslide: <b style={{ color: probColor(lsP) }}>{(lsP * 100).toFixed(1)}%</b></div>
-                    <div>🌊 Flood: <b style={{ color: '#0284c7' }}>{(flP * 100).toFixed(1)}%</b></div>
+                    <div>🏔 Landslide: <b style={{ color: probColor(lsP), fontFamily: 'var(--font-mono)' }}>{(lsP * 100).toFixed(1)}%</b></div>
+                    <div>🌊 Flood: <b style={{ color: '#38bdf8', fontFamily: 'var(--font-mono)' }}>{(flP * 100).toFixed(1)}%</b></div>
                     {pred?.action?.action && (
-                      <div style={{ marginTop: 4, fontWeight: 700, color: probColor(risk) }}>
+                      <div style={{ marginTop: 4, fontWeight: 700, color: probColor(risk), fontFamily: 'var(--font-mono)' }}>
                         ⚡ {pred.action.action}
                       </div>
                     )}
-                    <div style={{ marginTop: 4, color: '#64748b', fontSize: 11 }}>
-                      {lat.toFixed(3)}°N, {lng.toFixed(3)}°E · {loc.elevation_m || 500}m
+                    <div style={{ marginTop: 6, color: '#94a3b8', fontSize: 11, fontFamily: 'var(--font-mono)' }}>
+                      {lat.toFixed(3)}°N, {lng.toFixed(3)}°E · {loc.elevation_m || 500}m MSL
                     </div>
                   </div>
                 </div>
@@ -115,7 +130,7 @@ export default function MapView() {
         })}
       </MapContainer>
 
-      {/* Risk legend */}
+      {/* Tactical risk legend */}
       <div className="map-legend">
         {[['var(--hazard-safe)', '< 30%', 'Safe'], ['var(--hazard-watch)', '30–60%', 'Watch'], ['var(--hazard-warning)', '60–80%', 'Warning'], ['var(--hazard-critical)', '> 80%', 'Emergency']].map(([c, r, l]) => (
           <div key={l} className="legend-item">

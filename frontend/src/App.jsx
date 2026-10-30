@@ -1,19 +1,22 @@
 import React from 'react';
 import { AppProvider, useAppContext } from './state/AppContext';
-import { SimulationProvider } from './state/SimulationContext';
+import { SimulationProvider, useSimulationContext } from './state/SimulationContext';
 import TopBar from './components/TopBar';
 import SiteList from './components/SiteList';
 import MapView from './components/MapView';
-import SitePanel from './components/SitePanel';
-import AlertPanel from './components/AlertPanel';
+import { SitePanel } from './components/SitePanel';
+import Terrain3DView from './components/Terrain3DView';
 import SimulationWorkspace from './components/SimulationWorkspace';
 import SourceHealthGrid from './components/SourceHealthGrid';
+import AlertPanel from './components/AlertPanel';
 import TrainingPanel from './components/TrainingPanel';
 import ScorecardPanel from './components/ScorecardPanel';
 import ErrorBoundary from './components/ErrorBoundary';
+import './styles.css';
 
 const AppContent = () => {
-  const { activeTab } = useAppContext();
+  const { activeTab, show3D, setShow3D } = useAppContext();
+  const { lastPrediction } = useSimulationContext();
 
   return (
     <div className="app-container">
@@ -22,14 +25,28 @@ const AppContent = () => {
       </ErrorBoundary>
       <div className="main-content">
         {activeTab === 'Dashboard' && (
-          <div className="dashboard-layout">
+          <div className="dashboard-grid">
             <ErrorBoundary fallbackMessage="Failed to load monitoring sites list.">
               <SiteList />
             </ErrorBoundary>
-            <div className="map-container">
-              <ErrorBoundary fallbackMessage="Map view rendering encountered an issue.">
-                <MapView />
-              </ErrorBoundary>
+            <div className="center-panel">
+              {/* Tactical View Switcher */}
+              <div className="view-toggle">
+                <button className={`view-btn ${!show3D ? 'active' : ''}`} onClick={() => setShow3D(false)}>
+                  🗺 2D Tactical Map
+                </button>
+                <button className={`view-btn ${show3D ? 'active' : ''}`} onClick={() => setShow3D(true)}>
+                  🌐 3D Digital Elevation
+                </button>
+              </div>
+              <div className="map-or-3d">
+                <ErrorBoundary fallbackMessage="Map view rendering encountered an issue.">
+                  {show3D
+                    ? <Terrain3DView predictions={lastPrediction} />
+                    : <MapView />
+                  }
+                </ErrorBoundary>
+              </div>
             </div>
             <ErrorBoundary fallbackMessage="Site details panel encountered an issue.">
               <SitePanel />
@@ -52,7 +69,7 @@ const AppContent = () => {
           </ErrorBoundary>
         )}
 
-        {/* DEDICATED CHANGE: 'Training' and 'Scorecard' sections unmounted from the primary user interface.
+        {/* DEDICATED CHANGE: 'Training' and 'Scorecard' sections unmounted from primary user interface navigation.
             Preserved here for instantaneous re-activation whenever required.
         */}
         {/*

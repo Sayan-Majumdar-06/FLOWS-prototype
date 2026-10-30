@@ -33,8 +33,8 @@ export default function SiteList() {
   return (
     <div className="sidebar site-list">
       <div className="sidebar-header">
-        <span className="sidebar-title">🗺 Monitoring Sites</span>
-        <span className="site-count">{locations.length} sites</span>
+        <span className="sidebar-title">📡 Sector Radar</span>
+        <span className="site-count">{locations.length} SITES</span>
       </div>
       <div className="list-container">
         {locations.map(loc => {
@@ -63,9 +63,13 @@ export default function SiteList() {
                 <span className="site-name">{loc.name}</span>
                 <span className="site-action" style={{
                   color: action === 'EMERGENCY' ? 'var(--hazard-critical)' : action === 'WARNING' ? 'var(--hazard-warning)' : action === 'WATCH' ? 'var(--hazard-watch)' : 'var(--hazard-safe)',
+                  background: action === 'EMERGENCY' ? 'rgba(239, 68, 68, 0.15)' : action === 'WARNING' ? 'rgba(249, 115, 22, 0.15)' : action === 'WATCH' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(16, 185, 129, 0.15)',
+                  border: `1px solid ${action === 'EMERGENCY' ? 'rgba(239, 68, 68, 0.3)' : action === 'WARNING' ? 'rgba(249, 115, 22, 0.3)' : action === 'WATCH' ? 'rgba(245, 158, 11, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`,
+                  padding: '2px 6px',
+                  borderRadius: '4px',
                   fontSize: '0.65rem',
                   fontWeight: 700,
-                  letterSpacing: '0.3px',
+                  letterSpacing: '0.4px',
                 }}>
                   {action}
                 </span>
@@ -81,23 +85,23 @@ export default function SiteList() {
                 <div className="mini-bar-row">
                   <span className="mini-bar-label">FL</span>
                   <div className="mini-bar-bg">
-                    <div className="mini-bar-fill" style={{ width: (flP * 100) + '%', background: 'var(--flood-primary)' }} />
+                    <div className="mini-bar-fill" style={{ width: (flP * 100) + '%', background: 'var(--flood-secondary)' }} />
                   </div>
                   <span className="mini-bar-pct">{(flP * 100).toFixed(0)}%</span>
                 </div>
               </div>
               {fosState !== 'STABLE' && (
-                <div className="site-fos-warn">{fosState}</div>
+                <div className="site-fos-warn">STABILITY: {fosState}</div>
               )}
             </div>
           );
         })}
       </div>
       <div className="sidebar-footer">
-        <div className="legend-row"><span className="legend-dot" style={{ background: 'var(--hazard-safe)' }} /> Safe</div>
-        <div className="legend-row"><span className="legend-dot" style={{ background: 'var(--hazard-watch)' }} /> Watch</div>
-        <div className="legend-row"><span className="legend-dot" style={{ background: 'var(--hazard-warning)' }} /> Warning</div>
-        <div className="legend-row"><span className="legend-dot" style={{ background: 'var(--hazard-critical)' }} /> Emergency</div>
+        <div className="legend-row"><span className="legend-dot" style={{ background: 'var(--hazard-safe)' }} /> &lt;30% Safe</div>
+        <div className="legend-row"><span className="legend-dot" style={{ background: 'var(--hazard-watch)' }} /> 30-60% Watch</div>
+        <div className="legend-row"><span className="legend-dot" style={{ background: 'var(--hazard-warning)' }} /> 60-80% Warn</div>
+        <div className="legend-row"><span className="legend-dot" style={{ background: 'var(--hazard-critical)' }} /> &gt;80% Emerg</div>
       </div>
     </div>
   );
