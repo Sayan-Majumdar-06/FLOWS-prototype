@@ -2,22 +2,18 @@ import React from 'react';
 import { AppProvider, useAppContext } from './state/AppContext';
 import { SimulationProvider } from './state/SimulationContext';
 import TopBar from './components/TopBar';
-import MapView from './components/MapView';
 import SiteList from './components/SiteList';
+import MapView from './components/MapView';
 import SitePanel from './components/SitePanel';
-import Terrain3DView from './components/Terrain3DView';
+import AlertPanel from './components/AlertPanel';
 import SimulationWorkspace from './components/SimulationWorkspace';
 import SourceHealthGrid from './components/SourceHealthGrid';
-import AlertPanel from './components/AlertPanel';
-import ScorecardPanel from './components/ScorecardPanel';
 import TrainingPanel from './components/TrainingPanel';
+import ScorecardPanel from './components/ScorecardPanel';
 import ErrorBoundary from './components/ErrorBoundary';
-import { useSimulationContext } from './state/SimulationContext';
-import './styles.css';
 
 const AppContent = () => {
-  const { activeTab, show3D, setShow3D } = useAppContext();
-  const { lastPrediction } = useSimulationContext();
+  const { activeTab } = useAppContext();
 
   return (
     <div className="app-container">
@@ -26,24 +22,14 @@ const AppContent = () => {
       </ErrorBoundary>
       <div className="main-content">
         {activeTab === 'Dashboard' && (
-          <div className="dashboard-grid">
+          <div className="dashboard-layout">
             <ErrorBoundary fallbackMessage="Failed to load monitoring sites list.">
               <SiteList />
             </ErrorBoundary>
-            <div className="center-panel">
-              {/* 3D/2D toggle */}
-              <div className="view-toggle">
-                <button className={`view-btn ${!show3D ? 'active' : ''}`} onClick={() => setShow3D(false)}>🗺 2D Map</button>
-                <button className={`view-btn ${show3D ? 'active' : ''}`} onClick={() => setShow3D(true)}>🌐 3D Terrain</button>
-              </div>
-              <div className="map-or-3d">
-                <ErrorBoundary fallbackMessage="Map view rendering encountered an issue.">
-                  {show3D
-                    ? <Terrain3DView predictions={lastPrediction} />
-                    : <MapView />
-                  }
-                </ErrorBoundary>
-              </div>
+            <div className="map-container">
+              <ErrorBoundary fallbackMessage="Map view rendering encountered an issue.">
+                <MapView />
+              </ErrorBoundary>
             </div>
             <ErrorBoundary fallbackMessage="Site details panel encountered an issue.">
               <SitePanel />
@@ -65,7 +51,10 @@ const AppContent = () => {
             <AlertPanel />
           </ErrorBoundary>
         )}
-        {/* Training & Scorecard sections temporarily unmounted as requested; preserved for easy re-activation */}
+
+        {/* DEDICATED CHANGE: 'Training' and 'Scorecard' sections unmounted from the primary user interface.
+            Preserved here for instantaneous re-activation whenever required.
+        */}
         {/*
         {activeTab === 'Training' && (
           <ErrorBoundary fallbackMessage="Model training console encountered an issue.">

@@ -86,6 +86,15 @@ Traditional early warning systems operate in **rigid operational silos**:
                     └────────────────────────────────────────────────────────┘
 ```
 
+### 2.1 Primary Operational Consoles
+To optimize situational awareness for emergency response commanders, the user interface is structured around 4 dedicated operational consoles:
+1. **Dashboard**: Real-time telemetry, live multi-hazard risk gauges, geotechnical Factor of Safety ($FS$), and village impact triage.
+2. **Simulation**: 153-day monsoon crisis simulator with hardware-accelerated Three.js 3D WebGL terrain twin and scenario playback.
+3. **Sources**: Live external scientific API health monitor measuring genuine round-trip latency across satellite DEM and waterway feeds.
+4. **Alerts**: Automated civil protection directive dispatcher for NDMA evacuation tiers and BRO road closures.
+
+*(Note: Developer-oriented Training and Post-Event Scorecard panels have been removed from the primary navigation to keep the operational interface focused on active crisis command).*
+
 ---
 
 ## 3. Local Installation & Execution Commands

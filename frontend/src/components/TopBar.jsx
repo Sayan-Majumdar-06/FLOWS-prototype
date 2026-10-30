@@ -3,7 +3,10 @@ import { useAppContext } from '../state/AppContext';
 
 const TopBar = () => {
   const { activeTab, setActiveTab, operatingMode } = useAppContext();
-  // Note: 'Training' and 'Scorecard' can be re-added here anytime
+
+  // DEDICATED CHANGE: 'Training' and 'Scorecard' sections have been removed from the navigation.
+  // The system interface is streamlined to 4 core operational consoles: Dashboard, Simulation, Sources, Alerts.
+  // (Source files TrainingPanel.jsx and ScorecardPanel.jsx remain preserved in codebase for rapid re-activation).
   const tabs = ['Dashboard', 'Simulation', 'Sources', 'Alerts'];
 
   return (
