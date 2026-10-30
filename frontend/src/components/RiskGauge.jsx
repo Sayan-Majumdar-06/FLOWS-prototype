@@ -76,7 +76,7 @@ export default function RiskGauge() {
   const { lastPrediction, setLastPrediction, overrides } = useSimulationContext();
   const [loading, setLoading] = useState(false);
   const [sliders, setSliders] = useState({ rainfall_24h_mm: 65, initial_saturation_0_1: 0.45, slope_deg: 34 });
-  const [simMode, setSimMode] = useState(false);
+  const [simMode, setSimMode] = useState(true);
   const debounceRef = useRef(null);
 
   const locId = selectedLocation?.location_id || selectedLocation?.id;
@@ -86,25 +86,33 @@ export default function RiskGauge() {
     setLoading(true);
     try {
       const data = await apiClient.simulate(sid, ovr);
-      setLastPrediction(prev => ({ ...prev, [sid]: data }));
-    } catch {}
+      if (data) {
+        setLastPrediction(prev => ({ ...prev, [sid]: data }));
+      }
+    } catch (err) {
+      console.warn('Simulation parameter override error:', err);
+    }
     setLoading(false);
   }
 
   useEffect(() => {
-    if (locId) fetchPrediction(locId, {});
+    if (locId) {
+      fetchPrediction(locId, {});
+    }
     // eslint-disable-next-line
   }, [locId]);
 
   function handleSlider(key, val) {
     const newSliders = { ...sliders, [key]: val };
     setSliders(newSliders);
-    if (!simMode) return;
     clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => fetchPrediction(locId, newSliders), 400);
+    if (simMode) {
+      debounceRef.current = setTimeout(() => fetchPrediction(locId, newSliders), 250);
+    }
   }
 
   function applyOverrides() {
+    clearTimeout(debounceRef.current);
     fetchPrediction(locId, sliders);
   }
 

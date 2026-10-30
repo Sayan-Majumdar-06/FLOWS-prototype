@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import * as THREE from 'three';
 import { useAppContext } from '../state/AppContext';
+import { useSimulationContext } from '../state/SimulationContext';
 import { pilotLocations } from '../data/pilotLocations';
 import defaultSatelliteDem from '../data/sikkim_satellite_dem.json';
 
@@ -24,9 +25,11 @@ const SATELLITE_API_URL =
 const SEGS = 72; // Terrain mesh segment resolution (73x73 = 5,329 vertices)
 
 function probColor(p) {
-  if (p >= 0.8) return 0xdc2626;
-  if (p >= 0.6) return 0xea580c;
-  if (p >= 0.3) return 0xd97706;
+  const v = Number(p);
+  const val = Number.isFinite(v) ? (v > 1.0 ? v / 100.0 : v) : 0;
+  if (val >= 0.8) return 0xdc2626;
+  if (val >= 0.6) return 0xea580c;
+  if (val >= 0.3) return 0xd97706;
   return 0x16a34a;
 }
 
@@ -153,6 +156,11 @@ export default function Terrain3DView({ predictions = {} }) {
   const waterTextureRef = useRef(null);
 
   const { setSelectedLocation, selectedLocation } = useAppContext();
+  const { lastPrediction } = useSimulationContext();
+
+  const activePredictions = useMemo(() => {
+    return { ...(lastPrediction || {}), ...(predictions || {}) };
+  }, [lastPrediction, predictions]);
 
   // View Controls State
   const [textureMode, setTextureMode] = useState('satellite'); // 'satellite' | 'topo' | 'hazard'
@@ -488,10 +496,11 @@ export default function Terrain3DView({ predictions = {} }) {
 
       const siteAltitude = yWorld * vertExaggeration;
 
-      const pred = predictions[locId];
-      const lsP = pred?.prediction?.hazards?.landslide?.probability || 0;
-      const flP = pred?.prediction?.hazards?.flood?.probability || 0;
-      const riskP = Math.max(lsP, flP);
+      const pred = activePredictions[locId] || predictions[locId];
+      const lsP = pred?.prediction?.hazards?.landslide?.probability ?? pred?.hazards?.landslide?.probability ?? 0;
+      const flP = pred?.prediction?.hazards?.flood?.probability ?? pred?.hazards?.flood?.probability ?? 0;
+      const cpP = pred?.prediction?.hazards?.compound?.probability ?? pred?.hazards?.compound?.probability ?? 0;
+      const riskP = Math.max(lsP, flP, cpP);
       const colorHex = probColor(riskP);
 
       // Pin Group
@@ -534,11 +543,16 @@ export default function Terrain3DView({ predictions = {} }) {
       pinGroup.position.set(x, siteAltitude, z);
       pinGroup.userData = {
         loc,
+        locId,
         headMesh,
         ringMesh,
+        stemMesh,
         baseY: siteAltitude,
+        origBaseY: siteAltitude,
         satelliteElevation: Math.round(hMeters),
         distToRiverKm: distKm.toFixed(1),
+        pred,
+        riskP,
       };
 
       scene.add(pinGroup);
@@ -561,10 +575,14 @@ export default function Terrain3DView({ predictions = {} }) {
 
       if (hits.length > 0) {
         const hitGroup = hits[0].object.parent;
+        const hitLoc = hitGroup.userData?.loc || {};
+        const hitId = hitGroup.userData?.locId || hitLoc.location_id || hitLoc.id;
         setHoveredSite({
-          ...hitGroup.userData.loc,
-          satelliteElevation: hitGroup.userData.satelliteElevation,
-          distToRiverKm: hitGroup.userData.distToRiverKm,
+          ...hitLoc,
+          locId: hitId,
+          satelliteElevation: hitGroup.userData?.satelliteElevation,
+          distToRiverKm: hitGroup.userData?.distToRiverKm,
+          pred: activePredictions[hitId] || hitGroup.userData?.pred,
         });
         renderer.domElement.style.cursor = 'pointer';
       } else {
@@ -749,15 +767,61 @@ export default function Terrain3DView({ predictions = {} }) {
       });
     }
 
-    // Adjust station pin heights
+    // Adjust station pin heights without compounding
     if (markersRef.current) {
       markersRef.current.forEach((pin) => {
-        const normY = pin.userData.baseY * (vertExaggeration / 1.4);
+        const origBaseY = pin.userData.origBaseY ?? pin.userData.baseY;
+        pin.userData.origBaseY = origBaseY;
+        const normY = origBaseY * (vertExaggeration / 1.4);
         pin.userData.baseY = normY;
         pin.position.y = normY;
       });
     }
   }, [vertExaggeration]);
+
+  // Dynamic Live Color, Glow & Selection Synchronization for 3D Station Pins
+  useEffect(() => {
+    if (!markersRef.current || markersRef.current.length === 0) return;
+
+    markersRef.current.forEach((pinGroup) => {
+      const loc = pinGroup.userData?.loc;
+      const locId = pinGroup.userData?.locId || loc?.location_id || loc?.id;
+      if (!locId) return;
+
+      const pred = activePredictions[locId];
+      const lsP = pred?.prediction?.hazards?.landslide?.probability ?? pred?.hazards?.landslide?.probability ?? 0;
+      const flP = pred?.prediction?.hazards?.flood?.probability ?? pred?.hazards?.flood?.probability ?? 0;
+      const cpP = pred?.prediction?.hazards?.compound?.probability ?? pred?.hazards?.compound?.probability ?? 0;
+      const riskP = Math.max(lsP, flP, cpP);
+      const colorVal = probColor(riskP);
+      const threeColor = new THREE.Color(colorVal);
+
+      const isSelected = (selectedLocation?.location_id || selectedLocation?.id) === locId;
+      const targetScale = isSelected ? 1.4 : 1.0;
+      pinGroup.scale.set(targetScale, targetScale, targetScale);
+
+      // Dynamically update pin head color & glow
+      if (pinGroup.userData?.headMesh?.material) {
+        pinGroup.userData.headMesh.material.color.set(threeColor);
+        pinGroup.userData.headMesh.material.emissive.set(threeColor);
+        pinGroup.userData.headMesh.material.emissiveIntensity = isSelected ? 0.95 : 0.6;
+        pinGroup.userData.headMesh.material.needsUpdate = true;
+      }
+
+      // Dynamically update pulsing beacon ring color
+      if (pinGroup.userData?.ringMesh?.material) {
+        pinGroup.userData.ringMesh.material.color.set(threeColor);
+        pinGroup.userData.ringMesh.material.opacity = isSelected ? 0.95 : 0.7;
+        pinGroup.userData.ringMesh.material.needsUpdate = true;
+      }
+
+      // Update stored telemetry for hover inspection
+      if (pinGroup.userData) {
+        pinGroup.userData.pred = pred;
+        pinGroup.userData.riskP = riskP;
+      }
+    });
+  }, [activePredictions, selectedLocation]);
 
   // Update Wireframe visibility
   useEffect(() => {
@@ -995,6 +1059,28 @@ export default function Terrain3DView({ predictions = {} }) {
             <div style={{ color: '#64748b', fontSize: '0.68rem', marginTop: 2 }}>
               Coordinates: {hoveredSite.lat.toFixed(4)}°N, {hoveredSite.lng.toFixed(4)}°E
             </div>
+            {(() => {
+              const hId = hoveredSite.location_id || hoveredSite.id;
+              const hPred = activePredictions[hId] || hoveredSite.pred;
+              const hLs = hPred?.prediction?.hazards?.landslide?.probability ?? hPred?.hazards?.landslide?.probability ?? 0;
+              const hFl = hPred?.prediction?.hazards?.flood?.probability ?? hPred?.hazards?.flood?.probability ?? 0;
+              const hRisk = Math.max(hLs, hFl);
+              const riskColor = hRisk >= 0.8 ? '#dc2626' : hRisk >= 0.6 ? '#ea580c' : hRisk >= 0.3 ? '#d97706' : '#16a34a';
+              return (
+                <div style={{ marginTop: 6, paddingTop: 6, borderTop: '1px solid #e2e8f0', fontSize: '0.72rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
+                    <span>🏔️ Landslide: <b>{(hLs * 100).toFixed(1)}%</b></span>
+                    <span>🌊 Flood: <b>{(hFl * 100).toFixed(1)}%</b></span>
+                  </div>
+                  <div style={{ marginTop: 3, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ display: 'inline-block', width: 7, height: 7, borderRadius: '50%', background: riskColor }} />
+                    <span style={{ fontWeight: 700, color: riskColor, fontSize: '0.68rem' }}>
+                      {hRisk >= 0.8 ? 'CRITICAL EMERGENCY' : hRisk >= 0.6 ? 'MAJOR WARNING' : hRisk >= 0.3 ? 'WATCH ADVISORY' : 'NORMAL STABLE'}
+                    </span>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>
       )}
