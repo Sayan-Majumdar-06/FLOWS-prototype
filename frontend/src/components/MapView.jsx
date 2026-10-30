@@ -26,7 +26,7 @@ function FlyTo({ location }) {
       const lng = safeNum(location.lng ?? location.lon ?? location.longitude, 88.6);
       if (Number.isFinite(lat) && Number.isFinite(lng)) {
         try {
-          map.flyTo([lat, lng], 12, { duration: 1.2 });
+          map.flyTo([lat, lng], 11.5, { duration: 1.2 });
         } catch (e) {
           console.warn('Map flyTo error:', e);
         }
@@ -40,7 +40,8 @@ export default function MapView() {
   const { selectedLocation, setSelectedLocation, locations: ctxLocations } = useAppContext();
   const { lastPrediction } = useSimulationContext();
   const [locations, setLocations] = useState(ctxLocations || pilotLocations);
-  const [layer, setLayer] = useState('dark');
+  // Default to standard OpenStreetMap (100% keyless open tile service)
+  const [layer, setLayer] = useState('osm');
 
   useEffect(() => {
     if (Array.isArray(ctxLocations) && ctxLocations.length > 0) {
@@ -48,33 +49,40 @@ export default function MapView() {
     }
   }, [ctxLocations]);
 
+  // Pure open public endpoints with NO API KEY required
   const tileUrl = layer === 'satellite'
     ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-    : layer === 'dark'
-    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
     : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
   const defaultCenter = [27.45, 88.58];
 
   return (
     <div className="map-wrapper" style={{ height: '100%', width: '100%', position: 'relative' }}>
-      {/* Tactical layer toggle */}
+      {/* 100% Keyless Layer Switcher */}
       <div className="map-controls">
-        <button className={`map-btn ${layer === 'dark' ? 'active' : ''}`} onClick={() => setLayer('dark')}>
-          🌑 Tactical Dark
+        <button 
+          className={`map-btn ${layer === 'osm' ? 'active' : ''}`} 
+          onClick={() => setLayer('osm')}
+        >
+          🗺 Topographic Map
         </button>
-        <button className={`map-btn ${layer === 'satellite' ? 'active' : ''}`} onClick={() => setLayer('satellite')}>
-          🛰 Satellite
-        </button>
-        <button className={`map-btn ${layer === 'osm' ? 'active' : ''}`} onClick={() => setLayer('osm')}>
-          🗺 Topo
+        <button 
+          className={`map-btn ${layer === 'satellite' ? 'active' : ''}`} 
+          onClick={() => setLayer('satellite')}
+        >
+          🛰 High-Res Satellite
         </button>
       </div>
 
-      <MapContainer center={defaultCenter} zoom={10} style={{ height: '100%', width: '100%' }} zoomControl={true}>
+      <MapContainer 
+        center={defaultCenter} 
+        zoom={10} 
+        style={{ height: '100%', width: '100%' }} 
+        zoomControl={true}
+      >
         <TileLayer 
           url={tileUrl} 
-          attribution={layer === 'dark' ? '© CARTO / OpenStreetMap' : layer === 'satellite' ? '© Esri World Imagery' : '© OpenStreetMap'} 
+          attribution={layer === 'satellite' ? '© Esri World Imagery' : '© OpenStreetMap contributors'} 
           maxZoom={18} 
         />
         <FlyTo location={selectedLocation} />
