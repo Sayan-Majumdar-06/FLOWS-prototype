@@ -23,7 +23,7 @@ export function getCalendarDate(dayOfYear) {
         monthIndex: i,
         monthName: m.name,
         day: dayOfMonth,
-        dateString: `${m.name} ${dayOfMonth}, 2026`,
+        dateString: `${m.name} ${dayOfMonth}, 2024`,
         dayOfYear: day,
         totalDays: TOTAL_SIMULATION_DAYS,
       };
@@ -34,7 +34,7 @@ export function getCalendarDate(dayOfYear) {
     monthIndex: 4,
     monthName: "October",
     day: 31,
-    dateString: "October 31, 2026",
+    dateString: "October 31, 2024",
     dayOfYear: TOTAL_SIMULATION_DAYS,
     totalDays: TOTAL_SIMULATION_DAYS,
   };
