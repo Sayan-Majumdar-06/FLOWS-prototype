@@ -12,7 +12,6 @@
 [![Three.js](https://img.shields.io/badge/Three.js-WebGL%203D-black.svg?style=flat-square)](https://threejs.org/)
 [![XGBoost](https://img.shields.io/badge/XGBoost-2.0+-green.svg?style=flat-square)](https://xgboost.readthedocs.io/)
 [![LightGBM](https://img.shields.io/badge/LightGBM-4.0+-orange.svg?style=flat-square)](https://lightgbm.readthedocs.io/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
 ---
 
@@ -423,9 +422,5 @@ Developed for **Smart India Hackathon 2026**
 **Theme**: Disaster Management  
 **Team**: **Heisenbergers** (Team ID: `177303`)  
 **Target Corridor**: North Sikkim Teesta River Basin (Project SWASTIK / Border Roads Organisation)
+**Mission**: Built to protect lives, secure critical national transport lifelines, and pioneer physics-informed artificial intelligence in the Himalayas.
 
----
-
-## 12. License
-
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details. Built to protect lives, secure critical national transport lifelines, and pioneer physics-informed artificial intelligence in the Himalayas.
