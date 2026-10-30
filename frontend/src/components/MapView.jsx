@@ -49,11 +49,6 @@ export default function MapView() {
     }
   }, [ctxLocations]);
 
-  // Pure open public endpoints with NO API KEY required
-  const tileUrl = layer === 'satellite'
-    ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-    : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-
   const defaultCenter = [27.45, 88.58];
 
   return (
@@ -69,11 +64,21 @@ export default function MapView() {
       </div>
 
       <MapContainer center={defaultCenter} zoom={10} style={{ height: '100%', width: '100%' }} zoomControl={true}>
-        <TileLayer 
-          url={tileUrl} 
-          attribution={layer === 'satellite' ? '© Esri World Imagery' : '© OpenStreetMap contributors'} 
-          maxZoom={18} 
-        />
+        {layer === 'satellite' ? (
+          <TileLayer
+            key="satellite-layer"
+            url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
+            maxZoom={19}
+          />
+        ) : (
+          <TileLayer
+            key="osm-layer"
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+            maxZoom={19}
+          />
+        )}
         <FlyTo location={selectedLocation} />
 
         {locations.map(loc => {
