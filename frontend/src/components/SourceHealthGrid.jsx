@@ -103,7 +103,7 @@ export default function SourceHealthGrid() {
   };
 
   useEffect(() => {
-    fetchLiveSources(false);
+    fetchLiveSources(true);
   }, []);
 
   const types = ['All', ...new Set(sources.map(s => s.type))];
