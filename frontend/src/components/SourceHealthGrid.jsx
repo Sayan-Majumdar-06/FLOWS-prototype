@@ -9,7 +9,7 @@ const FALLBACK_SOURCES = [
     provider: 'NASA SRTM 90m / Open-Elevation Foundation',
     endpoint: 'https://api.open-elevation.com/api/v1/lookup',
     purpose: 'Queries real 3D topographic relief elevation grid for Teesta valley & hazard zones',
-    auth: 'Keyless / Public REST API',
+    auth: 'Open Public REST API',
     region: 'Sikkim / Global',
     coverage: '90m NASA SRTM Grid (Live 3D Telemetry)',
     used_in: 'Live 3D WebGL Terrain Mesh & Valley Topography Streaming',
@@ -24,7 +24,7 @@ const FALLBACK_SOURCES = [
     provider: 'European Space Agency (ESA) Copernicus GLO-90',
     endpoint: 'https://api.open-meteo.com/v1/elevation',
     purpose: 'High-speed elevation fallback for valley gradient and terrain profile generation',
-    auth: 'Keyless / Free Open API',
+    auth: 'Free Open Science API',
     region: 'Sikkim / Global',
     coverage: '90m GLO-90 Live Stream / 30m Offline Engine',
     used_in: 'Real-Time Elevation Fallback & Valley Stream Alignment',
@@ -39,7 +39,7 @@ const FALLBACK_SOURCES = [
     provider: 'Maxar / Earthstar Geographics / Esri',
     endpoint: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export',
     purpose: 'Drapes true-color high-resolution satellite imagery directly onto the 3D terrain mesh',
-    auth: 'Keyless / Public Tile & Export Service',
+    auth: 'Public Tile & Export Service',
     region: 'Teesta Basin, Sikkim',
     coverage: 'Sub-meter to 15m Optical Imagery',
     used_in: '3D Terrain Realistic Satellite Surface Draping',
@@ -54,7 +54,7 @@ const FALLBACK_SOURCES = [
     provider: 'OpenStreetMap Foundation / Overpass',
     endpoint: 'https://overpass-api.de/api/interpreter',
     purpose: 'Streams real-time vector coordinates, geometries and flow paths for Teesta River & tributaries',
-    auth: 'Keyless / Open Overpass QL API',
+    auth: 'Open Overpass QL API',
     region: 'Sikkim Waterway Basin',
     coverage: 'Complete River & Tributary Vector LineStrings',
     used_in: '3D River Mesh, Flow Animations, Flood Surge Channels',
@@ -69,7 +69,7 @@ const FALLBACK_SOURCES = [
     provider: 'OpenStreetMap Foundation',
     endpoint: 'https://tile.openstreetmap.org/',
     purpose: 'Renders base cartographic tiles for the interactive 2D simulation map & hazard pins',
-    auth: 'Keyless / Public Tile Server',
+    auth: 'Public OSM Carto Service',
     region: 'Global / Sikkim',
     coverage: 'Standard OpenStreetMap Web Mercator Tiles',
     used_in: '2D Simulation Map View & Custom Point Picker',
@@ -178,24 +178,13 @@ export default function SourceHealthGrid() {
               <span className="src-sum-item" style={{
                 background: '#dcfce7',
                 color: '#15803d',
-                padding: '7px 14px',
+                padding: '7px 16px',
                 borderRadius: '8px',
                 fontWeight: 700,
                 fontSize: '0.88rem',
                 border: '1px solid #86efac'
               }}>
                 ● {liveCount || sources.length} / {sources.length} OPERATIONAL
-              </span>
-              <span className="src-sum-item" style={{
-                background: '#e0f2fe',
-                color: '#0369a1',
-                padding: '7px 14px',
-                borderRadius: '8px',
-                fontWeight: 700,
-                fontSize: '0.88rem',
-                border: '1px solid #7dd3fc'
-              }}>
-                🔓 100% KEYLESS APIS
               </span>
             </div>
 
@@ -237,11 +226,11 @@ export default function SourceHealthGrid() {
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
       }}>
         <div style={{ fontWeight: 800, color: '#0369a1', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem' }}>
-          <span>ℹ️</span> Zero Secret Keys Required — 100% Open Scientific Data Architecture
+          <span>ℹ️</span> Open Scientific Data Infrastructure &amp; Live Telemetry
         </div>
         <div>
           FLOWS connects directly to open scientific endpoints (NASA SRTM, ESA Copernicus, Esri World Imagery, OpenStreetMap Overpass &amp; Tiles).
-          All five services are open, unauthenticated public endpoints. Anyone running this application can query live satellite elevation and waterway geometries without paid subscriptions, tokens, or environment keys.
+          All five services are open public endpoints that allow the system to stream satellite elevation models and waterway networks on demand.
         </div>
         <div style={{
           marginTop: '12px',

@@ -65,6 +65,8 @@ const AppContent = () => {
             <AlertPanel />
           </ErrorBoundary>
         )}
+        {/* Training & Scorecard sections temporarily unmounted as requested; preserved for easy re-activation */}
+        {/*
         {activeTab === 'Training' && (
           <ErrorBoundary fallbackMessage="Model training console encountered an issue.">
             <TrainingPanel />
@@ -75,6 +77,7 @@ const AppContent = () => {
             <ScorecardPanel />
           </ErrorBoundary>
         )}
+        */}
       </div>
     </div>
   );

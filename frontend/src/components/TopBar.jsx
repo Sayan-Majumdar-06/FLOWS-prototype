@@ -3,7 +3,8 @@ import { useAppContext } from '../state/AppContext';
 
 const TopBar = () => {
   const { activeTab, setActiveTab, operatingMode } = useAppContext();
-  const tabs = ['Dashboard', 'Simulation', 'Sources', 'Alerts', 'Training', 'Scorecard'];
+  // Note: 'Training' and 'Scorecard' can be re-added here anytime
+  const tabs = ['Dashboard', 'Simulation', 'Sources', 'Alerts'];
 
   return (
     <div className="topbar">

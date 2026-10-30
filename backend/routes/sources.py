@@ -32,7 +32,7 @@ ACTIVE_APIS: List[Dict[str, Any]] = [
             "https://elevation-api.open-meteo.com/v1/elevation?latitude=27.33&longitude=88.61",
         ],
         "purpose": "Queries real 3D topographic relief elevation grid for Teesta valley & hazard zones",
-        "auth": "Keyless / Public REST API",
+        "auth": "Open Public REST API",
         "region": "Sikkim / Global",
         "coverage": "90m NASA SRTM Grid (Live 3D Telemetry)",
         "used_in": "Live 3D WebGL Terrain Mesh & Valley Topography Streaming",
@@ -48,7 +48,7 @@ ACTIVE_APIS: List[Dict[str, Any]] = [
             "https://elevation-api.open-meteo.com/v1/elevation?latitude=27.33&longitude=88.61",
         ],
         "purpose": "High-speed elevation fallback for valley gradient and terrain profile generation",
-        "auth": "Keyless / Free Open API",
+        "auth": "Free Open Science API",
         "region": "Sikkim / Global",
         "coverage": "90m GLO-90 Live Stream / 30m Offline Engine",
         "used_in": "Real-Time Elevation Fallback & Valley Stream Alignment",
@@ -64,7 +64,7 @@ ACTIVE_APIS: List[Dict[str, Any]] = [
             "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/10/763/423",
         ],
         "purpose": "Drapes true-color high-resolution satellite imagery directly onto the 3D terrain mesh",
-        "auth": "Keyless / Public Tile & Export Service",
+        "auth": "Public Tile & Export Service",
         "region": "Teesta Basin, Sikkim",
         "coverage": "Sub-meter to 15m Optical Imagery",
         "used_in": "3D Terrain Realistic Satellite Surface Draping",
@@ -81,7 +81,7 @@ ACTIVE_APIS: List[Dict[str, Any]] = [
             "https://overpass.kumi.systems/",
         ],
         "purpose": "Streams real-time vector coordinates, geometries and flow paths for Teesta River & tributaries",
-        "auth": "Keyless / Open Overpass QL API",
+        "auth": "Open Overpass QL API",
         "region": "Sikkim Waterway Basin",
         "coverage": "Complete River & Tributary Vector LineStrings",
         "used_in": "3D River Mesh, Flow Animations, Flood Surge Channels",
@@ -97,7 +97,7 @@ ACTIVE_APIS: List[Dict[str, Any]] = [
             "https://a.tile.openstreetmap.org/10/763/423.png",
         ],
         "purpose": "Renders base cartographic tiles for the interactive 2D simulation map & hazard pins",
-        "auth": "Keyless / Public Tile Server",
+        "auth": "Public OSM Carto Service",
         "region": "Global / Sikkim",
         "coverage": "Standard OpenStreetMap Web Mercator Tiles",
         "used_in": "2D Simulation Map View & Custom Point Picker",
@@ -129,7 +129,6 @@ def _probe_single_url(url: str, timeout: float = 3.5) -> (bool, int, int):
             return False, status_code, elapsed_ms
     except urllib.error.HTTPError as he:
         elapsed_ms = int((time.time() - t0) * 1000)
-        # 304 Not Modified or 200-range handled
         if he.code in (200, 204, 304):
             return True, he.code, elapsed_ms
         return False, he.code, elapsed_ms
@@ -157,7 +156,6 @@ def _ping_endpoint(api_meta: Dict[str, Any]) -> Dict[str, Any]:
                 "verified_live": True,
             }
 
-    # If live queries timed out or failed, system gracefully falls back to cached resilience
     fallback_latency = max(last_elapsed, 82)
     return {
         **api_meta,
